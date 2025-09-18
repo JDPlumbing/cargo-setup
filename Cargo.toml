@@ -1,6 +1,6 @@
 [package]
 name = "cargo-setup"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "Cargo subcommand to scaffold projects with README, LICENSE, tests/, benches/, using your cargo-me profile"
 repository = "https://github.com/JDPlumbing/cargo-setup"
