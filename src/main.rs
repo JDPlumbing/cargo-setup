@@ -44,25 +44,21 @@ jobs:
 /// Cargo wrapper so you can run `cargo setup`
 #[derive(Parser)]
 #[command(name = "cargo", bin_name = "cargo")]
-struct Cargo {
-    /// Create a new crate
-    #[command(subcommand)]
-    command: Commands,
+enum Cargo {
+    /// Scaffold a new crate with profile-based extras
+    Setup(SetupArgs),
 }
 
-#[derive(clap::Subcommand)]
-enum Commands {
-    /// Scaffold a new crate with profile-based extras
-    Setup {
-        /// Name of the new crate
-        name: String,
-        /// Create a binary (default is library)
-        #[arg(long)]
-        bin: bool,
-        /// License override (e.g. MIT, Apache-2.0)
-        #[arg(long)]
-        license: Option<String>,
-    },
+#[derive(Parser)]
+struct SetupArgs {
+    /// Name of the new crate
+    name: String,
+    /// Create a binary (default is library)
+    #[arg(long)]
+    bin: bool,
+    /// License override (e.g. MIT, Apache-2.0)
+    #[arg(long)]
+    license: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -91,19 +87,18 @@ impl Profile {
 }
 
 fn main() {
-    let args = Cargo::parse();
-
-    match args.command {
-        Commands::Setup { name, bin, license } => {
+    match Cargo::parse() {
+        Cargo::Setup(args) => {
             let profile = Profile::load();
-            let license = license
+            let license = args
+                .license
                 .or_else(|| profile.as_ref().and_then(|p| p.license.clone()))
                 .unwrap_or_else(|| "MIT".to_string());
 
             // 1. Run cargo new
             let mut cmd = Command::new("cargo");
-            cmd.arg("new").arg(&name);
-            if bin {
+            cmd.arg("new").arg(&args.name);
+            if args.bin {
                 cmd.arg("--bin");
             }
             let status = cmd.status().expect("failed to run cargo new");
@@ -112,7 +107,7 @@ fn main() {
                 return;
             }
 
-            let crate_path = PathBuf::from(&name);
+            let crate_path = PathBuf::from(&args.name);
 
             // 2. Enhance Cargo.toml
             let cargo_toml_path = crate_path.join("Cargo.toml");
@@ -127,7 +122,7 @@ fn main() {
                 if let Some(gh) = &profile.github {
                     cargo_toml.push_str(&format!(
                         "repository = \"https://github.com/{}/{}\"\n",
-                        gh, name
+                        gh, args.name
                     ));
                 }
             }
@@ -144,10 +139,10 @@ fn main() {
 
                 let ci_badge = format!(
                     "[![CI](https://github.com/{}/{}/actions/workflows/ci.yml/badge.svg)](https://github.com/{}/{}/actions)",
-                    gh_user, name, gh_user, name
+                    gh_user, args.name, gh_user, args.name
                 );
 
-                let mut readme = format!("# {}\n\n{}\n\n", name, ci_badge);
+                let mut readme = format!("# {}\n\n{}\n\n", args.name, ci_badge);
 
                 if let Some(profile) = &profile {
                     if let Some(gh) = &profile.github {
@@ -160,7 +155,7 @@ fn main() {
 
                 readme.push_str(&format!(
                     "## 📦 Installation\n\n```bash\ncargo install {}\n```\n\n",
-                    name
+                    args.name
                 ));
 
                 readme.push_str(
@@ -169,7 +164,6 @@ fn main() {
 
                 fs::write(readme_path, readme).unwrap();
             }
-
 
             // 4. Add LICENSE
             let license_path = crate_path.join("LICENSE");
@@ -203,7 +197,7 @@ fn main() {
                 "// Basic benchmark (requires criterion)\nfn main() { println!(\"Run with cargo bench\"); }\n",
             )
             .unwrap();
-            
+
             // 6. Add CHANGELOG.md
             let changelog_path = crate_path.join("CHANGELOG.md");
             if !changelog_path.exists() {
@@ -212,7 +206,7 @@ fn main() {
                     The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\n\
                     and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n\n\
                     ## [Unreleased]\n- Initial scaffold\n",
-                    name
+                    args.name
                 );
                 fs::write(changelog_path, changelog).unwrap();
             }
@@ -227,7 +221,7 @@ fn main() {
 
             println!(
                 "✅ Scaffolded project `{}` with license `{}` and extras.",
-                name, license
+                args.name, license
             );
         }
     }
