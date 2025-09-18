@@ -1,17 +1,18 @@
 # cargo-setup
 
 A Cargo subcommand that scaffolds new crates with extra polish.  
-Think of it as `cargo new` but with **README.md**, **LICENSE**, **tests/**, **benches/**, and metadata auto-filled from your [cargo-me](https://crates.io/crates/cargo-me) profile.
+Think of it as `cargo new` but with **README.md**, **LICENSE**, **CHANGELOG.md**, **tests/**, **benches/**, and metadata auto-filled from your [cargo-me](https://crates.io/crates/cargo-me) profile. It even sets up **CI with GitHub Actions**.
 
 ---
 
 ## ✨ Features
 - Wraps `cargo new` internally — no need to run it separately.
 - Auto-fills `authors`, `license`, and `repository` in `Cargo.toml` from your `cargo-me` profile.
-- Adds `README.md` with repo/author info.
+- Adds `README.md` with CI badge, author info, installation, and usage example.
 - Adds `LICENSE` file with year + organization from profile.
 - Creates `tests/basic.rs` and `benches/bench.rs` folders.
-- Supports `--bin` or `--lib` (just like `cargo new`).
+- Adds a `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+- Sets up GitHub Actions CI (`.github/workflows/ci.yml`) for build, test, fmt, clippy on Linux/macOS/Windows.
 
 ---
 
@@ -70,10 +71,12 @@ cargo setup mycrate --license Apache-2.0
    shortid-rs/
    ├── Cargo.toml   # with authors/license/repo already filled
    ├── src/main.rs
-   ├── README.md
+   ├── README.md    # with CI badge, install, usage
    ├── LICENSE
+   ├── CHANGELOG.md
    ├── tests/basic.rs
-   └── benches/bench.rs
+   ├── benches/bench.rs
+   └── .github/workflows/ci.yml
    ```
 
 ---
