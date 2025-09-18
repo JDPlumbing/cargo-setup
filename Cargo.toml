@@ -1,0 +1,14 @@
+[package]
+name = "cargo-set"
+version = "0.1.0"
+edition = "2021"
+description = "Cargo subcommand to scaffold projects with README, LICENSE, tests/, benches/, using your cargo-me profile"
+license = "MIT"
+repository = "https://github.com/JDPlumbing/cargo-set"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+dirs = "5"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+chrono = "0.4"
