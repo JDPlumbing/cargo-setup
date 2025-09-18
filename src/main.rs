@@ -136,10 +136,12 @@ fn main() {
             // 3. Add README.md with CI badge + install instructions
             let readme_path = crate_path.join("README.md");
             if !readme_path.exists() {
-                let gh_user = profile
+                let gh_user_owned = profile
                     .as_ref()
-                    .and_then(|p| p.github.as_ref())
-                    .unwrap_or(&"your-github".to_string());
+                    .and_then(|p| p.github.clone())
+                    .unwrap_or_else(|| "your-github".to_string());
+                let gh_user = &gh_user_owned;
+
                 let ci_badge = format!(
                     "[![CI](https://github.com/{}/{}/actions/workflows/ci.yml/badge.svg)](https://github.com/{}/{}/actions)",
                     gh_user, name, gh_user, name
@@ -167,6 +169,7 @@ fn main() {
 
                 fs::write(readme_path, readme).unwrap();
             }
+
 
             // 4. Add LICENSE
             let license_path = crate_path.join("LICENSE");
