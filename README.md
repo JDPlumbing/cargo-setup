@@ -1,4 +1,4 @@
-# cargo-set
+# cargo-setup
 
 A Cargo subcommand that scaffolds new crates with extra polish.  
 Think of it as `cargo new` but with **README.md**, **LICENSE**, **tests/**, **benches/**, and metadata auto-filled from your [cargo-me](https://crates.io/crates/cargo-me) profile.
@@ -18,10 +18,10 @@ Think of it as `cargo new` but with **README.md**, **LICENSE**, **tests/**, **be
 ## 📦 Installation
 
 ```bash
-cargo install cargo-set
+cargo install cargo-setup
 ```
 
-Make sure you also have [`cargo-me`](https://crates.io/crates/cargo-me) installed and initialized, since `cargo-set` uses the profile stored in `~/.cargo-me.toml`.
+Make sure you also have [`cargo-me`](https://crates.io/crates/cargo-me) installed and initialized, since `cargo-setup` uses the profile stored in `~/.cargo-me.toml`.
 
 ```bash
 cargo install cargo-me
@@ -34,17 +34,17 @@ cargo me init
 
 ### Create a new binary crate
 ```bash
-cargo set myapp --bin
+cargo setup myapp --bin
 ```
 
 ### Create a new library crate
 ```bash
-cargo set mylib
+cargo setup mylib
 ```
 
 ### Override license
 ```bash
-cargo set mycrate --license Apache-2.0
+cargo setup mycrate --license Apache-2.0
 ```
 
 ---
@@ -62,7 +62,7 @@ cargo set mycrate --license Apache-2.0
 
 2. Scaffold new crates with extras in one command:
    ```bash
-   cargo set shortid-rs --bin
+   cargo setup shortid-rs --bin
    ```
 
 3. Resulting project structure:
